@@ -8,7 +8,7 @@ I would advise against using this anywhere with anticheat, it's just made to be 
 ![image](https://github.com/user-attachments/assets/12be1328-eefd-44ba-b731-59197188036e)
 ![image](https://github.com/user-attachments/assets/1150ff5e-5e1c-4b9d-b955-d0aa85013155)
 ![image](https://github.com/user-attachments/assets/8cb485fe-9fd1-47d7-adf9-9156ba676a69)
-![image](https://github.com/user-attachments/assets/c0e78616-acd6-4cbd-b031-3441f353bf1e)
+![image](https://github.com/user-attachments/assets/a8ffd096-b692-48ea-bfa8-c617be664a2e)
 ![image](https://github.com/user-attachments/assets/63554a09-33f1-401b-9c24-e0239e2b9a0b)
 
 
