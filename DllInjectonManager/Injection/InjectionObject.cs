@@ -1,9 +1,9 @@
-﻿using AddyTools.DllInjectonManager.Constants;
-using AddyTools.DllInjectonManager.DllMonitoring;
-using AddyTools.DllInjectonManager.ProcessMonitoring;
-using AddyTools.DllInjectonManager.UI;
+﻿using DLL_Injection_Manager.DllInjectonManager.Constants;
+using DLL_Injection_Manager.DllInjectonManager.DllMonitoring;
+using DLL_Injection_Manager.DllInjectonManager.ProcessMonitoring;
+using DLL_Injection_Manager.DllInjectonManager.UI;
 
-namespace AddyTools.DllInjectonManager.Injection;
+namespace DLL_Injection_Manager.DllInjectonManager.Injection;
 
 public class InjectionObject
 {
@@ -29,26 +29,26 @@ public class InjectionObject
         string targetProcessName = selectedProcessItem?.Name;
         if(string.IsNullOrEmpty(targetProcessName))
         {
-            uiManager.ShowWarning(StringConstants.MsgProcessRequired, StringConstants.TitleProcessRequired);
+            uiManager.ShowWarning(Constants_Strings_FormDllInjector.MsgProcessRequired, Constants_Strings_FormDllInjector.TitleProcessRequired);
             return;
         }
 
         if(selectedDllItem == null)
         {
-            uiManager.ShowWarning(StringConstants.MsgDllRequired, StringConstants.TitleDllRequired);
+            uiManager.ShowWarning(Constants_Strings_FormDllInjector.MsgDllRequired, Constants_Strings_FormDllInjector.TitleDllRequired);
             return;
         }
 
         string currentDllPath = selectedDllItem.FullPath;
         if(string.IsNullOrEmpty(currentDllPath))
         {
-            uiManager.ShowWarning(StringConstants.MsgDllRequired, StringConstants.TitleDllRequired);
+            uiManager.ShowWarning(Constants_Strings_FormDllInjector.MsgDllRequired, Constants_Strings_FormDllInjector.TitleDllRequired);
             return;
         }
 
         if(!File.Exists(currentDllPath))
         {
-            uiManager.ShowWarning(string.Format(StringConstants.MsgDllNotFoundFormat, Environment.NewLine, currentDllPath), StringConstants.TitleDllNotFound);
+            uiManager.ShowWarning(string.Format(Constants_Strings_FormDllInjector.MsgDllNotFoundFormat, Environment.NewLine, currentDllPath), Constants_Strings_FormDllInjector.TitleDllNotFound);
             recentDllManager.Remove(currentDllPath);
             saveSettingsAction();
             return;
@@ -57,14 +57,14 @@ public class InjectionObject
         string fullDllPath = Path.GetFullPath(currentDllPath);
         string dllFileName = Path.GetFileName(fullDllPath);
 
-        uiManager.SetStatus($"Refreshing process list to find '{targetProcessName}'...", ColorConstants.StatusColorDefault);
+        uiManager.SetStatus($"Refreshing process list to find '{targetProcessName}'...", Constants_Colors.StatusDefault);
         ownerControl?.Update();
         ProcessItem targetProcess = refreshProcessListAction();
 
         if(targetProcess == null)
         {
-            uiManager.SetStatus($"Process '{targetProcessName}' not found after refresh.", ColorConstants.StatusColorError);
-            uiManager.ShowError(string.Format(StringConstants.MsgProcessNotFoundFormat, targetProcessName), StringConstants.TitleProcessNotFound);
+            uiManager.SetStatus($"Process '{targetProcessName}' not found after refresh.", Constants_Colors.StatusError);
+            uiManager.ShowError(string.Format(Constants_Strings_FormDllInjector.MsgProcessNotFoundFormat, targetProcessName), Constants_Strings_FormDllInjector.TitleProcessNotFound);
             uiManager.UpdateButtonStates();
             return;
         }
@@ -77,16 +77,16 @@ public class InjectionObject
 
             if(processMonitor.IsDllLoaded(processId, fullDllPath))
             {
-                DialogResult result2 = uiManager.ShowConfirmation(string.Format(StringConstants.MsgDllPossiblyLoadedFormat, dllFileName, targetProcess.ToString(), Environment.NewLine), StringConstants.TitleDllPossiblyLoaded);
-                if(result2 == DialogResult.No)
+                DialogResult dResult = uiManager.ShowConfirmation(string.Format(Constants_Strings_FormDllInjector.MsgDllPossiblyLoadedFormat, dllFileName, targetProcess.ToString(), Environment.NewLine), Constants_Strings_FormDllInjector.TitleDllPossiblyLoaded);
+                if(dResult == DialogResult.No)
                 {
-                    uiManager.SetStatus(StringConstants.StatusInjectionCancelled, ColorConstants.StatusColorDefault);
+                    uiManager.SetStatus(Constants_Strings_FormDllInjector.StatusInjectionCancelled, Constants_Colors.StatusDefault);
                     uiManager.UpdateUIDueToSelectionChange();
                     return;
                 }
             }
 
-            uiManager.SetStatus(string.Format(StringConstants.StatusInjectingFormat, dllFileName, targetProcess.ToString(), processId), ColorConstants.StatusColorWarning);
+            uiManager.SetStatus(string.Format(Constants_Strings_FormDllInjector.StatusInjectingFormat, dllFileName, targetProcess.ToString(), processId), Constants_Colors.StatusWarning);
             ownerControl?.Update();
 
             var injector = new DllInjector();
@@ -96,22 +96,22 @@ public class InjectionObject
             {
                 processMonitor.TrackLoadedDll(processId, fullDllPath, result.ModuleHandle);
                 uiManager.SetDllLoadState(true);
-                uiManager.SetStatus(StringConstants.StatusInjectionSuccess, ColorConstants.StatusColorSuccess);
+                uiManager.SetStatus(Constants_Strings_FormDllInjector.StatusInjectionSuccess, Constants_Colors.StatusSuccess);
                 recentDllManager.AddOrUpdate(fullDllPath);
                 saveSettingsAction();
             }
             else
             {
                 uiManager.SetDllLoadState(false);
-                uiManager.ShowError(string.Format(StringConstants.StatusInjectionFailedFormat, result.Message), StringConstants.TitleInjectionFailed);
-                uiManager.SetStatus(string.Format(StringConstants.StatusInjectionFailedFormat, result.Message), ColorConstants.StatusColorError);
+                uiManager.ShowError(string.Format(Constants_Strings_FormDllInjector.StatusInjectionFailedFormat, result.Message), Constants_Strings_FormDllInjector.TitleInjectionFailed);
+                uiManager.SetStatus(string.Format(Constants_Strings_FormDllInjector.StatusInjectionFailedFormat, result.Message), Constants_Colors.StatusError);
             }
         }
         catch(Exception ex)
         {
             uiManager.SetDllLoadState(false);
-            uiManager.ShowError(string.Format(StringConstants.StatusErrorInjectionFormat, ex.Message, Environment.NewLine, ex.StackTrace), StringConstants.TitleInjectionError);
-            uiManager.SetStatus(StringConstants.StatusErrorGeneric, ColorConstants.StatusColorError);
+            uiManager.ShowError(string.Format(Constants_Strings_FormDllInjector.StatusErrorInjectionFormat, ex.Message, Environment.NewLine, ex.StackTrace), Constants_Strings_FormDllInjector.TitleInjectionError);
+            uiManager.SetStatus(Constants_Strings_FormDllInjector.StatusErrorGeneric, Constants_Colors.StatusError);
         }
         finally
         {

@@ -1,19 +1,13 @@
-using AddyTools.DllInjectonManager;
+using DLL_Injection_Manager.DllInjectonManager;
 
-namespace DLL_Injection_Manager
+namespace DLL_Injection_Manager;
+
+internal static class Program
 {
-    internal static class Program
+    [STAThread]
+    static void Main()
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
-        {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-            ApplicationConfiguration.Initialize();
-            Application.Run(new FormDllInjector());
-        }
+        ApplicationConfiguration.Initialize();
+        Application.Run(new FormDllInjector());
     }
 }

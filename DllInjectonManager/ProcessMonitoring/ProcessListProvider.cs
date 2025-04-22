@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace AddyTools.DllInjectonManager.ProcessMonitoring;
+namespace DLL_Injection_Manager.DllInjectonManager.ProcessMonitoring;
 
 public static class ProcessListProvider
 {
@@ -14,6 +14,7 @@ public static class ProcessListProvider
             Array.Sort(systemProcesses, (p1, p2) => string.Compare(p1.ProcessName, p2.ProcessName, StringComparison.OrdinalIgnoreCase));
 
             foreach(Process process in systemProcesses)
+            {
                 try
                 {
                     if(!string.IsNullOrEmpty(process.ProcessName))
@@ -27,6 +28,7 @@ public static class ProcessListProvider
                 {
                     process?.Dispose();
                 }
+            }
         }
         catch(Exception ex)
         {

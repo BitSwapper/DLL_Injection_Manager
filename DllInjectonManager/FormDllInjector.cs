@@ -1,13 +1,13 @@
-// AddyTools.DllInjectonManager.FormDllInjector.cs
 using System.Diagnostics;
-using AddyTools.DllInjectonManager.Constants;
-using AddyTools.DllInjectonManager.DllMonitoring;
-using AddyTools.DllInjectonManager.Injection;
-using AddyTools.DllInjectonManager.ProcessMonitoring;
-using AddyTools.DllInjectonManager.UI;
+using DLL_Injection_Manager.DllInjectonManager.Constants;
+using DLL_Injection_Manager.DllInjectonManager.DllMonitoring;
+using DLL_Injection_Manager.DllInjectonManager.Injection;
+using DLL_Injection_Manager.DllInjectonManager.ProcessMonitoring;
+using DLL_Injection_Manager.DllInjectonManager.UI;
+using static DLL_Injection_Manager.DllInjectonManager.Constants.Constants_Strings_FormDllInjector;
 using Timer = System.Windows.Forms.Timer;
 
-namespace AddyTools.DllInjectonManager;
+namespace DLL_Injection_Manager.DllInjectonManager;
 
 public partial class FormDllInjector : Form
 {
@@ -19,7 +19,7 @@ public partial class FormDllInjector : Form
     readonly SettingsManager settingsManager;
     readonly RecentDllManager recentDllManager;
     readonly UIManager uiManager;
-    readonly InjectionObject injectionWorkflow;
+    readonly InjectionObject injectionObject;
 
     public FormDllInjector()
     {
@@ -28,7 +28,7 @@ public partial class FormDllInjector : Form
         settingsManager = new();
         recentDllManager = new(listBoxRecentDlls, MaxRecentDlls);
         uiManager = new(lblStatus, btnInject, listBoxProcesses, recentDllManager, processMonitor);
-        injectionWorkflow = new(processMonitor, recentDllManager, uiManager, RefreshAndSelectProcess, SaveCurrentSettings, this);
+        injectionObject = new(processMonitor, recentDllManager, uiManager, RefreshAndSelectProcess, SaveCurrentSettings, this);
     }
 
     void FormDllInjector_Load(object sender, EventArgs e)
@@ -56,15 +56,17 @@ public partial class FormDllInjector : Form
     void btnBrowse_Click(object sender, EventArgs e)
     {
         using OpenFileDialog dlg = new ();
-        dlg.Filter = $"{StringConstants.DllFilter}|{StringConstants.AllFilesFilter}";
-        dlg.Title = StringConstants.SelectDllDialogTitle;
+        dlg.Filter = $"{DllFilter}|{AllFilesFilter}";
+        dlg.Title = SelectDllDialogTitle;
         var selectedDllItem = recentDllManager.SelectedDll;
+
         if(selectedDllItem != null && File.Exists(selectedDllItem.FullPath))
         {
             string dir = Path.GetDirectoryName(selectedDllItem.FullPath);
             if(Directory.Exists(dir))
                 dlg.InitialDirectory = dir;
         }
+
         if(dlg.ShowDialog() == DialogResult.OK)
         {
             recentDllManager.AddOrUpdate(dlg.FileName);
@@ -75,7 +77,7 @@ public partial class FormDllInjector : Form
 
     void txtSearch_TextChanged(object sender, EventArgs e) => FilterProcessList(txtSearch.Text);
 
-    void btnInject_Click(object sender, EventArgs e) => injectionWorkflow.PerformInjection(listBoxProcesses.SelectedItem as ProcessItem, recentDllManager.SelectedDll);
+    void btnInject_Click(object sender, EventArgs e) => injectionObject.PerformInjection(listBoxProcesses.SelectedItem as ProcessItem, recentDllManager.SelectedDll);
 
     void ApplyLoadedSettings(string processName, string serializedDllPaths)
     {
@@ -94,9 +96,9 @@ public partial class FormDllInjector : Form
         }
         catch(Exception ex)
         {
-            Debug.WriteLine(string.Format(StringConstants.DebugErrorApplyingSettingsFormat, ex.Message));
-            uiManager.SetStatus(StringConstants.StatusErrorApplyingSettings, ColorConstants.StatusColorError);
-            uiManager.ShowWarning(string.Format(StringConstants.DebugErrorApplyingSettingsFormat, ex.Message), StringConstants.TitleSettingsError);
+            Debug.WriteLine(string.Format(DebugErrorApplyingSettingsFormat, ex.Message));
+            uiManager.SetStatus(StatusErrorApplyingSettings, Constants_Colors.StatusError);
+            uiManager.ShowWarning(string.Format(DebugErrorApplyingSettingsFormat, ex.Message), TitleSettingsError);
         }
         finally
         {
@@ -128,8 +130,8 @@ public partial class FormDllInjector : Form
             uiManager.SetDllLoadState(isNowLoaded);
             uiManager.UpdateUIDueToSelectionChange();
 
-            if(!isNowLoaded && lblStatus.ForeColor != ColorConstants.StatusColorError)
-                uiManager.SetStatus(string.Format(StringConstants.StatusDllUnloadedFormat, selectedProcess.ToString()), ColorConstants.StatusColorUnloaded);
+            if(!isNowLoaded && lblStatus.ForeColor != Constants_Colors.StatusError)
+                uiManager.SetStatus(string.Format(StatusDllUnloadedFormat, selectedProcess.ToString()), Constants_Colors.StatusUnloaded);
         }
     }
 
@@ -139,11 +141,13 @@ public partial class FormDllInjector : Form
         RefreshProcessListInternal();
         if(string.IsNullOrEmpty(targetProcessName)) return null;
         ProcessItem targetProcess = allProcesses.FirstOrDefault(p => p.Name.Equals(targetProcessName, StringComparison.OrdinalIgnoreCase));
+
         if(targetProcess != null && listBoxProcesses.SelectedItem != targetProcess)
         {
             listBoxProcesses.SelectedItem = targetProcess;
             Application.DoEvents();
         }
+
         return listBoxProcesses.SelectedItem as ProcessItem;
     }
 
@@ -152,6 +156,7 @@ public partial class FormDllInjector : Form
         string previouslySelectedName = (listBoxProcesses.SelectedItem as ProcessItem)?.Name;
         Cursor = Cursors.WaitCursor;
         listBoxProcesses.BeginUpdate();
+
         try
         {
             allProcesses = ProcessListProvider.GetAllProcesses();
@@ -167,8 +172,8 @@ public partial class FormDllInjector : Form
         }
         catch(Exception ex)
         {
-            uiManager.ShowError($"Error refreshing process list: {ex.Message}", StringConstants.TitleGenericError);
-            uiManager.SetStatus(StringConstants.StatusErrorLoadingProcesses, ColorConstants.StatusColorError);
+            uiManager.ShowError($"Error refreshing process list: {ex.Message}", TitleGenericError);
+            uiManager.SetStatus(StatusErrorLoadingProcesses, Constants_Colors.StatusError);
         }
         finally
         {
@@ -182,17 +187,17 @@ public partial class FormDllInjector : Form
         listBoxProcesses.BeginUpdate();
         object previouslySelectedItem = listBoxProcesses.SelectedItem;
         listBoxProcesses.Items.Clear();
-        IEnumerable<ProcessItem> processesToShow = string.IsNullOrWhiteSpace(searchText)
-            ? allProcesses.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase)
-            : allProcesses.Where(p => p.Name.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0).OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase);
+        IEnumerable<ProcessItem> processesToShow = string.IsNullOrWhiteSpace(searchText) ? allProcesses.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase) : allProcesses.Where(p => p.Name.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0).OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase);
         listBoxProcesses.Items.AddRange(processesToShow.Cast<object>().ToArray());
         listBoxProcesses.EndUpdate();
+
         if(previouslySelectedItem != null && listBoxProcesses.Items.Contains(previouslySelectedItem))
             listBoxProcesses.SelectedItem = previouslySelectedItem;
         else if(listBoxProcesses.Items.Count == 1)
             listBoxProcesses.SelectedIndex = 0;
         else
             listBoxProcesses.ClearSelected();
+
         uiManager.UpdateUIDueToSelectionChange();
     }
 }

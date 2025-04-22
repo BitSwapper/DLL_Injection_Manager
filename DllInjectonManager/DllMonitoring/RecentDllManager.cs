@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace AddyTools.DllInjectonManager.DllMonitoring;
+namespace DLL_Injection_Manager.DllInjectonManager.DllMonitoring;
 
 public class RecentDllManager
 {
@@ -17,14 +17,13 @@ public class RecentDllManager
 
     public DllListItem SelectedDll => listBoxRecentDlls.SelectedItem as DllListItem;
 
-    public List<string> GetPaths() => new List<string>(recentDllPaths);
-
     public string SerializePaths() => JsonSerializer.Serialize(recentDllPaths);
 
     public void LoadPaths(string serializedPaths)
     {
         recentDllPaths.Clear();
         if(!string.IsNullOrEmpty(serializedPaths))
+        {
             try
             {
                 var loadedPaths = JsonSerializer.Deserialize<List<string>>(serializedPaths);
@@ -35,6 +34,7 @@ public class RecentDllManager
             {
                 System.Diagnostics.Debug.WriteLine($"Failed to deserialize recent DLL paths: {ex.Message}");
             }
+        }
         UpdateListBox();
         SelectFirstItem();
     }
@@ -57,6 +57,7 @@ public class RecentDllManager
         if(string.IsNullOrWhiteSpace(dllPath)) return;
         string fullPath = Path.GetFullPath(dllPath);
         int removedCount = recentDllPaths.RemoveAll(p => p.Equals(fullPath, StringComparison.OrdinalIgnoreCase));
+
         if(removedCount > 0)
         {
             UpdateListBox();
@@ -76,6 +77,7 @@ public class RecentDllManager
 
         if(previouslySelected != null && listBoxRecentDlls.Items.Contains(previouslySelected))
             listBoxRecentDlls.SelectedItem = previouslySelected;
+
         listBoxRecentDlls.EndUpdate();
     }
 

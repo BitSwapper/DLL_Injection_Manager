@@ -1,6 +1,6 @@
 ﻿using DLL_Injection_Manager.Properties;
 
-namespace AddyTools.DllInjectonManager;
+namespace DLL_Injection_Manager.DllInjectonManager;
 
 public class SettingsManager
 {

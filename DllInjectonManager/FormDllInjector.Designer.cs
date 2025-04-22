@@ -1,4 +1,4 @@
-namespace AddyTools.DllInjectonManager
+namespace DLL_Injection_Manager.DllInjectonManager
 {
     partial class FormDllInjector
     {
@@ -28,10 +28,9 @@ namespace AddyTools.DllInjectonManager
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormDllInjector));
             listBoxProcesses = new ListBox();
             btnRefresh = new Button();
-            label2 = new Label();
-            txtDllPath = new TextBox();
             btnBrowse = new Button();
             btnInject = new Button();
             lblStatus = new Label();
@@ -43,6 +42,7 @@ namespace AddyTools.DllInjectonManager
             // listBoxProcesses
             // 
             listBoxProcesses.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            listBoxProcesses.BackColor = SystemColors.ButtonShadow;
             listBoxProcesses.FormattingEnabled = true;
             listBoxProcesses.ItemHeight = 15;
             listBoxProcesses.Location = new Point(12, 41);
@@ -61,33 +61,14 @@ namespace AddyTools.DllInjectonManager
             btnRefresh.UseVisualStyleBackColor = true;
             btnRefresh.Click += btnRefresh_Click;
             // 
-            // label2
-            // 
-            label2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            label2.AutoSize = true;
-            label2.Location = new Point(15, 279);
-            label2.Name = "label2";
-            label2.Size = new Size(57, 15);
-            label2.TabIndex = 3;
-            label2.Text = "DLL Path:";
-            // 
-            // txtDllPath
-            // 
-            txtDllPath.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            txtDllPath.Location = new Point(76, 276);
-            txtDllPath.Name = "txtDllPath";
-            txtDllPath.ReadOnly = true;
-            txtDllPath.Size = new Size(314, 23);
-            txtDllPath.TabIndex = 4;
-            // 
             // btnBrowse
             // 
             btnBrowse.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnBrowse.Location = new Point(396, 275);
+            btnBrowse.Location = new Point(12, 271);
             btnBrowse.Name = "btnBrowse";
-            btnBrowse.Size = new Size(75, 23);
+            btnBrowse.Size = new Size(125, 23);
             btnBrowse.TabIndex = 5;
-            btnBrowse.Text = "Browse...";
+            btnBrowse.Text = "Browse for DLL's...";
             btnBrowse.UseVisualStyleBackColor = true;
             btnBrowse.Click += btnBrowse_Click;
             // 
@@ -95,7 +76,7 @@ namespace AddyTools.DllInjectonManager
             // 
             btnInject.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnInject.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            btnInject.Location = new Point(396, 313);
+            btnInject.Location = new Point(393, 296);
             btnInject.Name = "btnInject";
             btnInject.Size = new Size(75, 32);
             btnInject.TabIndex = 6;
@@ -107,7 +88,7 @@ namespace AddyTools.DllInjectonManager
             // 
             lblStatus.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             lblStatus.AutoSize = true;
-            lblStatus.Location = new Point(15, 313);
+            lblStatus.Location = new Point(15, 305);
             lblStatus.MaximumSize = new Size(375, 0);
             lblStatus.Name = "lblStatus";
             lblStatus.Size = new Size(94, 15);
@@ -117,6 +98,7 @@ namespace AddyTools.DllInjectonManager
             // txtSearch
             // 
             txtSearch.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtSearch.BackColor = SystemColors.ButtonShadow;
             txtSearch.Location = new Point(76, 12);
             txtSearch.Name = "txtSearch";
             txtSearch.PlaceholderText = "Search by process name...";
@@ -136,6 +118,7 @@ namespace AddyTools.DllInjectonManager
             // listBoxRecentDlls
             // 
             listBoxRecentDlls.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            listBoxRecentDlls.BackColor = SystemColors.ButtonShadow;
             listBoxRecentDlls.FormattingEnabled = true;
             listBoxRecentDlls.ItemHeight = 15;
             listBoxRecentDlls.Location = new Point(12, 156);
@@ -147,6 +130,7 @@ namespace AddyTools.DllInjectonManager
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = SystemColors.ScrollBar;
             ClientSize = new Size(480, 357);
             Controls.Add(listBoxRecentDlls);
             Controls.Add(label3);
@@ -154,14 +138,13 @@ namespace AddyTools.DllInjectonManager
             Controls.Add(lblStatus);
             Controls.Add(btnInject);
             Controls.Add(btnBrowse);
-            Controls.Add(txtDllPath);
-            Controls.Add(label2);
             Controls.Add(btnRefresh);
             Controls.Add(listBoxProcesses);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MinimumSize = new Size(400, 396);
             Name = "FormDllInjector";
             StartPosition = FormStartPosition.CenterParent;
-            Text = "DLL Injector";
+            Text = "DLL Injection Manager";
             Load += FormDllInjector_Load;
             ResumeLayout(false);
             PerformLayout();
@@ -171,8 +154,6 @@ namespace AddyTools.DllInjectonManager
 
         private ListBox listBoxProcesses;
         private Button btnRefresh;
-        private Label label2;
-        private TextBox txtDllPath;
         private Button btnBrowse;
         private Button btnInject;
         private Label lblStatus;

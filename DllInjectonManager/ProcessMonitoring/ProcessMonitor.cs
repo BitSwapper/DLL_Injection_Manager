@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace AddyTools.DllInjectonManager.ProcessMonitoring;
+namespace DLL_Injection_Manager.DllInjectonManager.ProcessMonitoring;
 
 public class ProcessMonitor
 {
@@ -22,10 +22,11 @@ public class ProcessMonitor
 
     public bool IsDllLoaded(int processId, string dllPath)
     {
-        if(string.IsNullOrEmpty(dllPath)) return false;
+        if(string.IsNullOrEmpty(dllPath))
+            return false;
 
-        if(loadedModules.TryGetValue(processId, out var processDlls) &&
-            processDlls.ContainsKey(dllPath.ToLower()))
+        if(loadedModules.TryGetValue(processId, out var processDlls) && processDlls.ContainsKey(dllPath.ToLower()))
+        {
             if(IsDllLoadedInProcess(processId, dllPath))
                 return true;
             else
@@ -33,6 +34,7 @@ public class ProcessMonitor
                 processDlls.Remove(dllPath.ToLower());
                 return false;
             }
+        }
 
         bool isLoaded = IsDllLoadedInProcess(processId, dllPath);
         if(isLoaded)
@@ -48,13 +50,12 @@ public class ProcessMonitor
         foreach(int processId in loadedModules.Keys)
             try
             {
-                nint hProcess = NativeFunctions.OpenProcess(
-                    NativeFunctions.PROCESS_QUERY_INFORMATION, false, processId);
+                nint processHandle = NativeFunctions.OpenProcess(NativeFunctions.PROCESS_QUERY_INFORMATION, false, processId);
 
-                if(hProcess == nint.Zero)
+                if(processHandle == nint.Zero)
                     processesToRemove.Add(processId);
                 else
-                    NativeFunctions.CloseHandle(hProcess);
+                    NativeFunctions.CloseHandle(processHandle);
             }
             catch
             {
@@ -67,32 +68,32 @@ public class ProcessMonitor
 
     bool IsDllLoadedInProcess(int processId, string dllPath)
     {
-        nint hProcess = nint.Zero;
+        nint processHandle = nint.Zero;
         bool isLoaded = false;
         const uint access = NativeFunctions.PROCESS_QUERY_INFORMATION | NativeFunctions.PROCESS_VM_READ;
 
         try
         {
-            hProcess = NativeFunctions.OpenProcess(access, false, processId);
-            if(hProcess == nint.Zero)
+            processHandle = NativeFunctions.OpenProcess(access, false, processId);
+            if(processHandle == nint.Zero)
                 return false;
 
             string targetDllName = Path.GetFileName(dllPath);
             if(string.IsNullOrEmpty(targetDllName)) return false;
 
-            uint cbNeeded;
-            nint[] hMods = new nint[1024];
-            uint arraySize = (uint)(nint.Size * hMods.Length);
+            uint bytesNeeded;
+            nint[] moduleHandles = new nint[1024];
+            uint arraySize = (uint)(nint.Size * moduleHandles.Length);
 
-            if(NativeFunctions.EnumProcessModulesEx(hProcess, hMods, arraySize, out cbNeeded, NativeFunctions.LIST_MODULES_ALL))
+            if(NativeFunctions.EnumProcessModulesEx(processHandle, moduleHandles, arraySize, out bytesNeeded, NativeFunctions.LIST_MODULES_ALL))
             {
-                int moduleCount = (int)(cbNeeded / nint.Size);
+                int moduleCount = (int)(bytesNeeded / nint.Size);
                 StringBuilder moduleNameBuilder = new StringBuilder((int)NativeFunctions.MAX_PATH);
 
                 for(int i = 0; i < moduleCount; i++)
                 {
                     moduleNameBuilder.Clear();
-                    if(NativeFunctions.GetModuleFileNameExA(hProcess, hMods[i], moduleNameBuilder, NativeFunctions.MAX_PATH) > 0)
+                    if(NativeFunctions.GetModuleFileNameExA(processHandle, moduleHandles[i], moduleNameBuilder, NativeFunctions.MAX_PATH) > 0)
                     {
                         string currentModuleName = Path.GetFileName(moduleNameBuilder.ToString());
                         if(targetDllName.Equals(currentModuleName, StringComparison.OrdinalIgnoreCase))
@@ -112,8 +113,8 @@ public class ProcessMonitor
         }
         finally
         {
-            if(hProcess != nint.Zero)
-                NativeFunctions.CloseHandle(hProcess);
+            if(processHandle != nint.Zero)
+                NativeFunctions.CloseHandle(processHandle);
         }
 
         return isLoaded;

@@ -1,8 +1,8 @@
-﻿using AddyTools.DllInjectonManager.Constants;
-using AddyTools.DllInjectonManager.DllMonitoring;
-using AddyTools.DllInjectonManager.ProcessMonitoring;
+﻿using DLL_Injection_Manager.DllInjectonManager.Constants;
+using DLL_Injection_Manager.DllInjectonManager.DllMonitoring;
+using DLL_Injection_Manager.DllInjectonManager.ProcessMonitoring;
 
-namespace AddyTools.DllInjectonManager.UI;
+namespace DLL_Injection_Manager.DllInjectonManager.UI;
 
 public class UIManager
 {
@@ -31,7 +31,7 @@ public class UIManager
 
         isDllCurrentlyLoaded = false;
         string currentStatusMessage = string.Empty;
-        Color currentStatusColor = ColorConstants.StatusColorDefault;
+        Color currentStatusColor = Constants_Colors.StatusDefault;
 
         if(selectedProcess != null && selectedDll != null)
         {
@@ -41,26 +41,28 @@ public class UIManager
                 if(File.Exists(currentDllPath))
                 {
                     isDllCurrentlyLoaded = processMonitor.IsDllLoaded(selectedProcess.Id, currentDllPath);
+
                     currentStatusMessage = isDllCurrentlyLoaded
-                        ? string.Format(StringConstants.StatusDllAlreadyLoadedFormat, selectedDll.FileName, selectedProcess.ToString())
-                        : string.Format(StringConstants.StatusReadyToInjectFormat, selectedDll.FileName, selectedProcess.ToString());
-                    currentStatusColor = isDllCurrentlyLoaded ? ColorConstants.StatusColorWarning : ColorConstants.StatusColorDefault;
+                        ? string.Format(Constants_Strings_FormDllInjector.StatusDllAlreadyLoadedFormat, selectedDll.FileName, selectedProcess.ToString())
+                        : string.Format(Constants_Strings_FormDllInjector.StatusReadyToInjectFormat, selectedDll.FileName, selectedProcess.ToString());
+
+                    currentStatusColor = isDllCurrentlyLoaded ? Constants_Colors.StatusWarning : Constants_Colors.StatusDefault;
                 }
                 else
                 {
-                    currentStatusMessage = string.Format(StringConstants.StatusDllFileNotFoundFormat, selectedDll.FileName);
-                    currentStatusColor = ColorConstants.StatusColorError;
+                    currentStatusMessage = string.Format(Constants_Strings_FormDllInjector.StatusDllFileNotFoundFormat, selectedDll.FileName);
+                    currentStatusColor = Constants_Colors.StatusError;
                 }
             }
         }
 
         UpdateButtonStates();
 
-        bool isCurrentlyInjecting = previousColor == ColorConstants.StatusColorWarning && previousText.StartsWith("Injecting");
+        bool isCurrentlyInjecting = previousColor == Constants_Colors.StatusWarning && previousText.StartsWith("Injecting");
 
         if(!isCurrentlyInjecting)
         {
-            if(string.IsNullOrEmpty(currentStatusMessage) && previousColor == ColorConstants.StatusColorUnloaded && previousText.Contains("unloaded"))
+            if(string.IsNullOrEmpty(currentStatusMessage) && previousColor == Constants_Colors.StatusUnloaded && previousText.Contains("unloaded"))
                 SetStatus(previousText, previousColor);
             else
                 SetStatus(currentStatusMessage, currentStatusColor);

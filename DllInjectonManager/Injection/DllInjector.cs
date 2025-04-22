@@ -1,93 +1,54 @@
 ﻿using System.Runtime.InteropServices;
 using System.Text;
+using static DLL_Injection_Manager.DllInjectonManager.Constants.Constants_Strings_DllInjector;
 
-namespace AddyTools.DllInjectonManager.Injection;
-
-public class DllInjector
+namespace DLL_Injection_Manager.DllInjectonManager.Injection; public class DllInjector
 {
-    const string Kernel32DllName = "kernel32.dll";
-    const string LoadLibraryFunctionName = "LoadLibraryA";
-    const uint StandardProcessAccess = NativeFunctions.PROCESS_CREATE_THREAD | NativeFunctions.PROCESS_QUERY_INFORMATION | NativeFunctions.PROCESS_VM_OPERATION | NativeFunctions.PROCESS_VM_WRITE | NativeFunctions.PROCESS_VM_READ;
-    const uint MemoryAllocationType = NativeFunctions.MEM_COMMIT | NativeFunctions.MEM_RESERVE;
-    const uint MemoryProtection = NativeFunctions.PAGE_READWRITE;
-    const uint MemoryReleaseType = NativeFunctions.MEM_RELEASE;
+    const bool InheritHandles = false;
     const uint DefaultStackSize = 0;
     const uint DefaultCreationFlags = 0;
     const uint InjectThreadTimeoutMilliseconds = 5000;
-    const bool InheritHandles = false;
-    const string CStyleNullTerminator = "\0";
-    static readonly string ErrorMsgOpenProcessFailed = "Failed to open process (PID: {0}). Error code: {1}";
-    static readonly string ErrorMsgGetLoadLibraryAddressFailed = "Failed to get address of " + LoadLibraryFunctionName + ". Error code: {0}";
-    static readonly string ErrorMsgAllocateMemoryFailed = "Failed to allocate memory in target process. Error code: {0}";
-    static readonly string ErrorMsgWriteMemoryFailed = "Failed to write DLL path to process memory. Error code: {0}";
-    static readonly string ErrorMsgCreateRemoteThreadFailed = "Failed to create remote thread. Error code: {0}";
-    static readonly string ErrorMsgGetExitCodeFailed = "Failed to get remote thread exit code. Error code: {0}";
-    static readonly string ErrorMsgLoadLibraryFailedInTarget = LoadLibraryFunctionName + " failed in the target process (returned NULL). Check DLL dependencies, path, bitness, and DllMain.";
-    static readonly string ErrorMsgRemoteThreadTimedOut = "Remote thread timed out (" + LoadLibraryFunctionName + " took too long or deadlocked).";
-    static readonly string ErrorMsgWaitForThreadFailed = "Waiting for remote thread failed. Wait result: {0}. Error code: {1}";
-    static readonly string ErrorMsgGenericException = "Generic Exception during injection: {0}";
-    static readonly string SuccessMsgDllInjected = "DLL injected successfully.";
+    const uint MemoryReleaseType = NativeFunctions.MEM_RELEASE;
+    const uint MemoryProtection = NativeFunctions.PAGE_READWRITE;
+    const uint MemoryAllocationType = NativeFunctions.MEM_COMMIT | NativeFunctions.MEM_RESERVE;
+    const uint StandardProcessAccess = NativeFunctions.PROCESS_CREATE_THREAD | NativeFunctions.PROCESS_QUERY_INFORMATION | NativeFunctions.PROCESS_VM_OPERATION | NativeFunctions.PROCESS_VM_WRITE | NativeFunctions.PROCESS_VM_READ;
 
     public (bool Success, string Message, nint ModuleHandle) InjectDll(int processId, string dllPath)
     {
-        nint hProcess = nint.Zero;
-        nint pDllPath = nint.Zero;
-        nint hThread = nint.Zero;
+        bool success = false;
+        string message = string.Empty;
+        nint threadHandle = nint.Zero;
         nint moduleHandle = nint.Zero;
+        nint processHandle = nint.Zero;
+        nint dllPathPointer = nint.Zero;
 
         try
         {
-            hProcess = NativeFunctions.OpenProcess(StandardProcessAccess, InheritHandles, processId);
-            if(hProcess == nint.Zero)
-                return (false, string.Format(ErrorMsgOpenProcessFailed, processId, Marshal.GetLastWin32Error()), nint.Zero);
+            var openProcResult = TryOpenProcessHandle(processId);
+            if(!openProcResult.Success) return (false, openProcResult.Message, nint.Zero);
+            processHandle = openProcResult.ProcessHandle;
 
-            nint hKernel32 = NativeFunctions.GetModuleHandle(Kernel32DllName);
-            if(hKernel32 == nint.Zero)
-                return (false, $"Failed to get handle for {Kernel32DllName}. Error code: {Marshal.GetLastWin32Error()}", nint.Zero);
+            var loadLibAddrResult = TryGetLoadLibraryAddress();
+            if(!loadLibAddrResult.Success) return (false, loadLibAddrResult.Message, nint.Zero);
+            nint loadLibraryAddr = loadLibAddrResult.Address;
 
-            nint loadLibraryAddr = NativeFunctions.GetProcAddress(hKernel32, LoadLibraryFunctionName);
-            if(loadLibraryAddr == nint.Zero)
-                return (false, string.Format(ErrorMsgGetLoadLibraryAddressFailed, Marshal.GetLastWin32Error()), nint.Zero);
+            var writePathResult = TryAllocateAndWritePath(processHandle, dllPath);
+            if(!writePathResult.Success) return (false, writePathResult.Message, nint.Zero);
+            dllPathPointer = writePathResult.PathAddress;
 
-            byte[] dllPathBytes = Encoding.ASCII.GetBytes(dllPath + CStyleNullTerminator);
-            uint bufferSize = (uint)dllPathBytes.Length;
+            var createThreadResult = TryCreateInjectionThread(processHandle, loadLibraryAddr, dllPathPointer);
+            if(!createThreadResult.Success) return (false, createThreadResult.Message, nint.Zero);
+            threadHandle = createThreadResult.ThreadHandle;
 
-            pDllPath = NativeFunctions.VirtualAllocEx(hProcess, nint.Zero, bufferSize, MemoryAllocationType, MemoryProtection);
-            if(pDllPath == nint.Zero)
-                return (false, string.Format(ErrorMsgAllocateMemoryFailed, Marshal.GetLastWin32Error()), nint.Zero);
+            var waitResult = WaitForThreadAndGetResult(threadHandle);
+            success = waitResult.Success;
+            message = waitResult.Message;
+            moduleHandle = waitResult.ModuleHandle;
 
-            if(!NativeFunctions.WriteProcessMemory(hProcess, pDllPath, dllPathBytes, bufferSize, out nint bytesWritten) || bytesWritten.ToInt32() != bufferSize)
-            {
-                NativeFunctions.VirtualFreeEx(hProcess, pDllPath, nuint.Zero, MemoryReleaseType);
-                pDllPath = nint.Zero;
-                return (false, string.Format(ErrorMsgWriteMemoryFailed, Marshal.GetLastWin32Error()), nint.Zero);
-            }
+            if(success)
+                MessageBox.Show("DLL Path placed in target memory at: 0x" + dllPathPointer.ToString("X"));
 
-            hThread = NativeFunctions.CreateRemoteThread(hProcess, nint.Zero, DefaultStackSize, loadLibraryAddr, pDllPath, DefaultCreationFlags, out _);
-            if(hThread == nint.Zero)
-            {
-                NativeFunctions.VirtualFreeEx(hProcess, pDllPath, nuint.Zero, MemoryReleaseType);
-                pDllPath = nint.Zero;
-                return (false, string.Format(ErrorMsgCreateRemoteThreadFailed, Marshal.GetLastWin32Error()), nint.Zero);
-            }
-
-            uint waitResult = NativeFunctions.WaitForSingleObject(hThread, InjectThreadTimeoutMilliseconds);
-
-            if(waitResult == NativeFunctions.WAIT_OBJECT_0)
-            {
-                if(!NativeFunctions.GetExitCodeThread(hThread, out moduleHandle))
-                    return (false, string.Format(ErrorMsgGetExitCodeFailed, Marshal.GetLastWin32Error()), nint.Zero);
-
-                if(moduleHandle == nint.Zero)
-                    return (false, ErrorMsgLoadLibraryFailedInTarget, nint.Zero);
-
-                MessageBox.Show("Placed at " + pDllPath.ToString("X"));
-                return (true, SuccessMsgDllInjected, moduleHandle);
-            }
-            else if(waitResult == NativeFunctions.WAIT_TIMEOUT)
-                return (false, ErrorMsgRemoteThreadTimedOut, nint.Zero);
-            else
-                return (false, string.Format(ErrorMsgWaitForThreadFailed, waitResult, Marshal.GetLastWin32Error()), nint.Zero);
+            return (success, message, moduleHandle);
         }
         catch(Exception ex)
         {
@@ -95,14 +56,84 @@ public class DllInjector
         }
         finally
         {
-            if(hThread != nint.Zero)
-                NativeFunctions.CloseHandle(hThread);
+            if(threadHandle != nint.Zero)
+                NativeFunctions.CloseHandle(threadHandle);
 
-            if(pDllPath != nint.Zero && hProcess != nint.Zero)
-                NativeFunctions.VirtualFreeEx(hProcess, pDllPath, nuint.Zero, MemoryReleaseType);
+            if(dllPathPointer != nint.Zero && processHandle != nint.Zero)
+                NativeFunctions.VirtualFreeEx(processHandle, dllPathPointer, nuint.Zero, MemoryReleaseType);
 
-            if(hProcess != nint.Zero)
-                NativeFunctions.CloseHandle(hProcess);
+            if(processHandle != nint.Zero)
+                NativeFunctions.CloseHandle(processHandle);
         }
+    }
+
+    (bool Success, nint ProcessHandle, string Message) TryOpenProcessHandle(int processId)
+    {
+        nint processHandle = NativeFunctions.OpenProcess(StandardProcessAccess, InheritHandles, processId);
+        if(processHandle == nint.Zero)
+            return (false, nint.Zero, string.Format(ErrorMsgOpenProcessFailed, processId, Marshal.GetLastWin32Error()));
+
+        return (true, processHandle, string.Empty);
+    }
+
+    (bool Success, nint Address, string Message) TryGetLoadLibraryAddress()
+    {
+        nint Kernel32Handle = NativeFunctions.GetModuleHandle(Kernel32DllName);
+        if(Kernel32Handle == nint.Zero)
+            return (false, nint.Zero, string.Format(ErrorMsgGetKernel32HandleFailed, Kernel32DllName, Marshal.GetLastWin32Error()));
+
+        nint loadLibraryAddy = NativeFunctions.GetProcAddress(Kernel32Handle, LoadLibraryFunctionName);
+        if(loadLibraryAddy == nint.Zero)
+            return (false, nint.Zero, string.Format(ErrorMsgGetLoadLibraryAddressFailed, Marshal.GetLastWin32Error()));
+
+        return (true, loadLibraryAddy, string.Empty);
+    }
+
+    (bool Success, nint PathAddress, string Message) TryAllocateAndWritePath(nint hProcess, string dllPath)
+    {
+        nint dllPathPointer = nint.Zero;
+        byte[] dllPathBytes = Encoding.ASCII.GetBytes(dllPath + CStyleNullTerminator);
+        uint bufferSize = (uint)dllPathBytes.Length;
+
+        dllPathPointer = NativeFunctions.VirtualAllocEx(hProcess, nint.Zero, bufferSize, MemoryAllocationType, MemoryProtection);
+        if(dllPathPointer == nint.Zero)
+            return (false, nint.Zero, string.Format(ErrorMsgAllocateMemoryFailed, Marshal.GetLastWin32Error()));
+
+        if(!NativeFunctions.WriteProcessMemory(hProcess, dllPathPointer, dllPathBytes, bufferSize, out nint bytesWritten) || bytesWritten.ToInt32() != bufferSize)
+        {
+            NativeFunctions.VirtualFreeEx(hProcess, dllPathPointer, nuint.Zero, MemoryReleaseType);
+            return (false, nint.Zero, string.Format(ErrorMsgWriteMemoryFailed, Marshal.GetLastWin32Error()));
+        }
+
+        return (true, dllPathPointer, string.Empty);
+    }
+
+    (bool Success, nint ThreadHandle, string Message) TryCreateInjectionThread(nint hProcess, nint loadLibraryAddr, nint pDllPath)
+    {
+        nint threadHandle = NativeFunctions.CreateRemoteThread(hProcess, nint.Zero, DefaultStackSize, loadLibraryAddr, pDllPath, DefaultCreationFlags, out _);
+        if(threadHandle == nint.Zero)
+            return (false, nint.Zero, string.Format(ErrorMsgCreateRemoteThreadFailed, Marshal.GetLastWin32Error()));
+        return (true, threadHandle, string.Empty);
+    }
+
+    (bool Success, nint ModuleHandle, string Message) WaitForThreadAndGetResult(nint threadHandle)
+    {
+        nint moduleHandle = nint.Zero;
+        uint waitResult = NativeFunctions.WaitForSingleObject(threadHandle, InjectThreadTimeoutMilliseconds);
+
+        if(waitResult == NativeFunctions.WAIT_OBJECT_0)
+        {
+            if(!NativeFunctions.GetExitCodeThread(threadHandle, out moduleHandle))
+                return (false, nint.Zero, string.Format(ErrorMsgGetExitCodeFailed, Marshal.GetLastWin32Error()));
+
+            if(moduleHandle == nint.Zero)
+                return (false, nint.Zero, ErrorMsgLoadLibraryFailedInTarget);
+
+            return (true, moduleHandle, SuccessMsgDllInjected);
+        }
+        else if(waitResult == NativeFunctions.WAIT_TIMEOUT)
+            return (false, nint.Zero, ErrorMsgRemoteThreadTimedOut);
+        else
+            return (false, nint.Zero, string.Format(ErrorMsgWaitForThreadFailed, waitResult, Marshal.GetLastWin32Error()));
     }
 }

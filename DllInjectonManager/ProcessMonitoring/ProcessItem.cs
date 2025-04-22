@@ -1,4 +1,4 @@
-﻿namespace AddyTools.DllInjectonManager.ProcessMonitoring;
+﻿namespace DLL_Injection_Manager.DllInjectonManager.ProcessMonitoring;
 
 public class ProcessItem
 {

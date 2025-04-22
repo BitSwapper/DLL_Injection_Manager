@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using System.Text;
 
-namespace AddyTools.DllInjectonManager;
+namespace DLL_Injection_Manager.DllInjectonManager;
 
 public static class NativeFunctions
 {
