@@ -72,10 +72,9 @@ public class RecentDllManager
         listBoxRecentDlls.Items.Clear();
 
         foreach(string path in recentDllPaths)
-        {
-            if(File.Exists(path)) // Ensure file exists before adding
+            if(File.Exists(path))
                 listBoxRecentDlls.Items.Add(new DllListItem(path));
-        }
+        
 
 
         if(previouslySelectedItem != null && listBoxRecentDlls.Items.Cast<DllListItem>().Any(item => item.FullPath == (previouslySelectedItem as DllListItem)?.FullPath))
@@ -86,7 +85,6 @@ public class RecentDllManager
 
         listBoxRecentDlls.EndUpdate();
     }
-
 
     void TrimList()
     {

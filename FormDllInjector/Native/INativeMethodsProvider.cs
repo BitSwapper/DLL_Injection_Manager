@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace FormDllInjector.ProcessMonitoring;
+namespace FormDllInjector.Native;
 
 public interface INativeMethodsProvider
 {
