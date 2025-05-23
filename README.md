@@ -1,6 +1,7 @@
 A simple winforms based injector which keeps a history of recently used dlls, and remembers the last dll and process used on application start.
 
-the libraries Injector32 and Injector64 can be used independantly if desired. 
+libraries Injector32 and Injector64 can be used independantly if desired.
+(i.e. just include Injector32.dll and InjectorCommon.dll in any project) 
 
 The winform monitors the status of the DLL's and the last injected process to help prevent double injection errors, etc.
 
