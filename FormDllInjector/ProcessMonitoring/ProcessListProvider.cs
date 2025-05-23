@@ -16,10 +16,8 @@ public static class ProcessListProvider
             {
                 try
                 {
-                    if(!string.IsNullOrEmpty(process.ProcessName) && process.MainWindowHandle != IntPtr.Zero) // Basic filter for GUI apps
-                    {
+                    if(!string.IsNullOrEmpty(process.ProcessName) && process.MainWindowHandle != IntPtr.Zero)
                         processes.Add(new ProcessItem(process.Id, process.ProcessName));
-                    }
                 }
                 catch(Exception ex)
                 {

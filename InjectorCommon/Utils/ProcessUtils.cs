@@ -1,10 +1,17 @@
 ﻿using InjectorCommon.Native;
-using InjectorCommon.Utils;
 
-namespace FormDllInjector.Utils;
+namespace InjectorCommon.Utils;
+
+public enum ProcessBitness
+{
+    Unknown,
+    Bit32,
+    Bit64
+}
+
 public static class ProcessUtils
 {
-    public static ProcessBitness GetTargetProcessBitness(int processId)
+    public static ProcessBitness GetProcessBitness(int processId)
     {
         if(!Environment.Is64BitOperatingSystem)
             return ProcessBitness.Bit32;
@@ -21,10 +28,16 @@ public static class ProcessUtils
 
             return isWow64 ? ProcessBitness.Bit32 : ProcessBitness.Bit64;
         }
+        catch(Exception ex)
+        {
+            return ProcessBitness.Unknown;
+        }
         finally
         {
             if(processHandle != nint.Zero)
                 NativeMethods.CloseHandle(processHandle);
         }
     }
+
+    public static ProcessBitness GetCurrentProcessBitness() => IntPtr.Size == 8 ? ProcessBitness.Bit64 : ProcessBitness.Bit32;
 }

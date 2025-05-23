@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net8.0-windows</TargetFramework>
@@ -9,11 +8,11 @@
 		<PlatformTarget>x64</PlatformTarget>
 		<StartupObject>FormDllInjector.Program</StartupObject>
 	</PropertyGroup>
-
+	
 	<ItemGroup>
 		<ProjectReference Include="..\InjectorCommon\InjectorCommon.csproj" />
 	</ItemGroup>
-
+	
 	<ItemGroup>
 		<!-- Files for Injector32MiddleMan -->
 		<Content Include="..\Injector32MiddleMan\bin\$(Configuration)\net8.0\Injector32MiddleMan.exe">
@@ -32,17 +31,12 @@
 			<Link>Injector32MiddleMan.runtimeconfig.json</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		<!-- Also copy Injector32.dll and InjectorCommon.dll as dependencies of Injector32MiddleMan.exe -->
-		<Content Include="..\Injector32\bin\$(Configuration)\net8.0\Injector32.dll">
-			<Link>Injector32.dll</Link>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
+		
+		<!-- InjectorCommon.dll as dependency of MiddleMan EXEs -->
 		<Content Include="..\InjectorCommon\bin\$(Configuration)\net8.0\InjectorCommon.dll">
 			<Link>InjectorCommon.dll</Link>
-			<!-- Link name might need to be unique if multiple versions, but should be same -->
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-
 
 		<!-- Files for Injector64MiddleMan -->
 		<Content Include="..\Injector64MiddleMan\bin\$(Configuration)\net8.0\Injector64MiddleMan.exe">
@@ -61,16 +55,10 @@
 			<Link>Injector64MiddleMan.runtimeconfig.json</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		<!-- Also copy Injector64.dll as dependency of Injector64MiddleMan.exe -->
-		<Content Include="..\Injector64\bin\$(Configuration)\net8.0\Injector64.dll">
-			<Link>Injector64.dll</Link>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<!-- InjectorCommon.dll already included above, no need to repeat if it's the same version -->
 
-
+		<Content Include="app.ico" />
 	</ItemGroup>
-
+	
 	<ItemGroup>
 		<Compile Update="Properties\Settings.Designer.cs">
 			<DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -78,12 +66,11 @@
 			<DependentUpon>Settings.settings</DependentUpon>
 		</Compile>
 	</ItemGroup>
-
+	
 	<ItemGroup>
 		<None Update="Properties\Settings.settings">
 			<Generator>SettingsSingleFileGenerator</Generator>
 			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
 		</None>
 	</ItemGroup>
-
 </Project>

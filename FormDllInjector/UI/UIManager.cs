@@ -43,12 +43,11 @@ public class UIManager
                 if(File.Exists(currentDllPath))
                 {
                     isDllCurrentlyLoadedInternal = processMonitor.IsDllLoaded(selectedProcess.Id, currentDllPath);
-
                     if(isDllCurrentlyLoadedInternal)
                     {
                         currentStatusMessage = string.Format(StaticStringsFormDllInjector.StatusDllAlreadyLoadedFormat, selectedDll.FileName, selectedProcess.ToString());
                         currentStatusColor = StaticColors.StatusWarning;
-                        enableInjectButton = true; // Allow re-injection if desired by user via confirmation
+                        enableInjectButton = true;
                     }
                     else
                     {
@@ -72,20 +71,13 @@ public class UIManager
             }
         }
         else if(selectedProcess == null && selectedDll != null)
-        {
             currentStatusMessage = "Select a target process.";
-        }
         else if(selectedProcess != null && selectedDll == null)
-        {
             currentStatusMessage = "Select a DLL to inject.";
-        }
 
-        // Preserve "Injecting..." status and color if currently in that state
         bool isCurrentlyInjecting = lblStatus.Text.StartsWith("Injecting") && lblStatus.ForeColor == StaticColors.StatusWarning;
         if(!isCurrentlyInjecting)
-        {
             SetStatus(currentStatusMessage, currentStatusColor);
-        }
 
         if(btnInject.InvokeRequired)
             btnInject.Invoke((MethodInvoker)delegate { btnInject.Enabled = enableInjectButton; });

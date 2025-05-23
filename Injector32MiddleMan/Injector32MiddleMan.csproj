@@ -8,6 +8,5 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\InjectorCommon\InjectorCommon.csproj" />
-		<ProjectReference Include="..\Injector32\Injector32.csproj" />
 	</ItemGroup>
 </Project>

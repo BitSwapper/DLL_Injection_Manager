@@ -48,4 +48,8 @@ public static class NativeMethods
 
     [DllImport("kernel32.dll", SetLastError = true)]
     public static extern bool GetExitCodeThread(nint hThread, out nint lpExitCode);
+
+    [DllImport("kernel32.dll", SetLastError = true, CallingConvention = CallingConvention.Winapi)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool IsWow64Process([In] nint processHandle, [Out, MarshalAs(UnmanagedType.Bool)] out bool wow64Process);
 }

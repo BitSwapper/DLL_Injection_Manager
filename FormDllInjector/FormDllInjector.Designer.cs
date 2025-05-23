@@ -52,12 +52,12 @@
             // 
             // btnBrowse
             // 
-            btnBrowse.Anchor = AnchorStyles.Bottom | AnchorStyles.Left; // Corrected Anchor for Browse
+            btnBrowse.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             btnBrowse.Location = new Point(12, 271);
             btnBrowse.Name = "btnBrowse";
             btnBrowse.Size = new Size(125, 23);
             btnBrowse.TabIndex = 5;
-            btnBrowse.Text = "Browse for DLL..."; // Adjusted Text
+            btnBrowse.Text = "Browse for DLL...";
             btnBrowse.UseVisualStyleBackColor = true;
             btnBrowse.Click += btnBrowse_Click;
             // 
@@ -106,11 +106,11 @@
             // 
             // listBoxRecentDlls
             // 
-            listBoxRecentDlls.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right; // Corrected Anchor
+            listBoxRecentDlls.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             listBoxRecentDlls.BackColor = SystemColors.ButtonShadow;
             listBoxRecentDlls.FormattingEnabled = true;
             listBoxRecentDlls.ItemHeight = 15;
-            listBoxRecentDlls.Location = new Point(12, 156); // Adjusted position
+            listBoxRecentDlls.Location = new Point(12, 156);
             listBoxRecentDlls.Name = "listBoxRecentDlls";
             listBoxRecentDlls.Size = new Size(456, 109);
             listBoxRecentDlls.TabIndex = 10;
@@ -132,7 +132,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             MinimumSize = new Size(400, 396);
             Name = "FormDllInjector";
-            StartPosition = FormStartPosition.CenterScreen; // Changed for better default
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "DLL Injection Manager";
             Load += FormDllInjector_Load;
             ResumeLayout(false);

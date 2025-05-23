@@ -74,14 +74,12 @@ public class RecentDllManager
         foreach(string path in recentDllPaths)
             if(File.Exists(path))
                 listBoxRecentDlls.Items.Add(new DllListItem(path));
-        
 
 
         if(previouslySelectedItem != null && listBoxRecentDlls.Items.Cast<DllListItem>().Any(item => item.FullPath == (previouslySelectedItem as DllListItem)?.FullPath))
             listBoxRecentDlls.SelectedItem = listBoxRecentDlls.Items.Cast<DllListItem>().FirstOrDefault(item => item.FullPath == (previouslySelectedItem as DllListItem)?.FullPath);
         else
             SelectFirstItem();
-
 
         listBoxRecentDlls.EndUpdate();
     }

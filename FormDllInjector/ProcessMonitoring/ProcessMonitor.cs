@@ -29,11 +29,8 @@ public class ProcessMonitor
     public void UntrackDll(int processId, string dllPath)
     {
         if(loadedModules.TryGetValue(processId, out var processDlls))
-        {
             processDlls.Remove(dllPath.ToLowerInvariant());
-        }
     }
-
 
     public bool IsDllLoaded(int processId, string dllPath)
     {
@@ -43,7 +40,8 @@ public class ProcessMonitor
 
         if(loadedModules.TryGetValue(processId, out var processDlls) && processDlls.ContainsKey(lowerDllPath))
         {
-            if(IsDllActuallyLoadedInProcess(processId, dllPath)) return true;
+            if(IsDllActuallyLoadedInProcess(processId, dllPath))
+                return true;
 
             processDlls.Remove(lowerDllPath);
             return false;
@@ -51,9 +49,8 @@ public class ProcessMonitor
 
         bool isLoaded = IsDllActuallyLoadedInProcess(processId, dllPath);
         if(isLoaded)
-        {
             TrackLoadedDll(processId, dllPath, nint.Zero);
-        }
+
         return isLoaded;
     }
 
@@ -66,9 +63,7 @@ public class ProcessMonitor
             {
                 using var process = System.Diagnostics.Process.GetProcessById(processId);
                 if(process.HasExited)
-                {
                     processesToRemove.Add(processId);
-                }
             }
             catch
             {
@@ -77,9 +72,7 @@ public class ProcessMonitor
         }
 
         foreach(int processId in processesToRemove)
-        {
             loadedModules.Remove(processId);
-        }
     }
 
     bool IsDllActuallyLoadedInProcess(int processId, string dllPath)

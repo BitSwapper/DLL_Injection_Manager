@@ -1,42 +1,50 @@
-﻿using System;
-using System.IO;
-using System.Text.Json;
+﻿using System.Text.Json;
 using InjectorCommon;
-using Injector32.Core; // To call Injector32.dll's core logic
+using InjectorCommon.Core;
 
-namespace Injector32MiddleMan
+namespace Injector32MiddleMan;
+
+internal class Program
 {
-    internal class Program
+    static int Main(string[] args)
     {
-        static int Main(string[] args)
+        if(!TryParseArguments(args, out int processId, out string dllPath, out InjectionResult earlyExitResult))
         {
-            InjectionResult result;
+            PrintResultAndExit(earlyExitResult, 1);
+            return 1;
+        }
+
+        InjectionResult injectionResult = PerformInjection(processId, dllPath);
+        return PrintResultAndExit(injectionResult, injectionResult.Success ? 0 : 1);
+
+
+        static bool TryParseArguments(string[] args, out int processId, out string dllPath, out InjectionResult errorResult)
+        {
+            processId = 0;
+            dllPath = null;
+            errorResult = null;
 
             if(args.Length < 2)
             {
-                result = new InjectionResult { Success = false, Message = "Usage: Injector32MiddleMan.exe <PID> <DLL_PATH>", ModuleHandle = 0L };
-                Console.WriteLine(JsonSerializer.Serialize(result));
-                return 1;
+                errorResult = new InjectionResult { Success = false, Message = "Usage: Injector32MiddleMan.exe <PID> <DLL_PATH>", ModuleHandle = 0L };
+                return false;
             }
 
-            if(!int.TryParse(args[0], out int processId))
+            if(!int.TryParse(args[0], out processId))
             {
-                result = new InjectionResult { Success = false, Message = "Invalid PID.", ModuleHandle = 0L };
-                Console.WriteLine(JsonSerializer.Serialize(result));
-                return 1;
+                errorResult = new InjectionResult { Success = false, Message = "Invalid PID provided.", ModuleHandle = 0L };
+                return false;
             }
 
-            string dllPath = args[1];
-            if(!File.Exists(dllPath))
-            {
-                result = new InjectionResult { Success = false, Message = $"DLL not found: {dllPath}", ModuleHandle = 0L };
-                Console.WriteLine(JsonSerializer.Serialize(result));
-                return 1;
-            }
+            dllPath = args[1];
 
-            // Call the Injector32 library's core logic
-            result = Injector32.Core.InjectorCore.InjectDllInternal(processId, dllPath);
+            return true;
+        }
 
+        static InjectionResult PerformInjection(int processId, string dllPath) => Injector.Inject(processId, dllPath);
+
+        static int PrintResultAndExit(InjectionResult result, int exitCode)
+        {
             try
             {
                 string jsonResult = JsonSerializer.Serialize(result);
@@ -49,8 +57,7 @@ namespace Injector32MiddleMan
                 Console.WriteLine(JsonSerializer.Serialize(fallbackResult));
                 return 1;
             }
-
-            return result.Success ? 0 : 1;
+            return exitCode;
         }
     }
 }
