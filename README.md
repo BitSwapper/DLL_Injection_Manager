@@ -1,4 +1,4 @@
-A simple winforms based injector which keeps a history of recently used dlls, and remembers the last dll and process used on application start.
+A simple unified (32 and 64 bit support in one GUI / API Call) winforms based injector which keeps a history of recently used dlls, and remembers the last dll and process used on application start.
 
 Injection via library can be used independantly if desired.
 (i.e. just include InjectorCommon.dll in any project, Call InjectorCommon.Injector.Inject(Int procId, string dllPath) 
