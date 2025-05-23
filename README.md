@@ -11,7 +11,7 @@ I would advise against using this anywhere with anticheat, it's just made to be 
 
 The GUI / FormMain bitness does not matter, it can inject into either 32 or 64 bit processes (thanks to the middleman exes). 
 
-**Dll and Injection Target but Must Bitness**
+**Dll and Injection Target but Must Match Bitness**
 
 ![image](https://github.com/user-attachments/assets/12be1328-eefd-44ba-b731-59197188036e)
 ![image](https://github.com/user-attachments/assets/1150ff5e-5e1c-4b9d-b955-d0aa85013155)
