@@ -1,0 +1,70 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+		<PlatformTarget>x64</PlatformTarget>
+		<StartupObject>FormDllInjector.Program</StartupObject>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\InjectorCommon\InjectorCommon.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="..\Injector32\bin\$(Configuration)\net8.0\Injector32.exe">
+			<Link>Injector32.exe</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\Injector32\bin\$(Configuration)\net8.0\Injector32.dll">
+			<Link>Injector32.dll</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\Injector32\bin\$(Configuration)\net8.0\Injector32.deps.json">
+			<Link>Injector32.deps.json</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\Injector32\bin\$(Configuration)\net8.0\Injector32.runtimeconfig.json">
+			<Link>Injector32.runtimeconfig.json</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+
+		
+		
+		<Content Include="..\Injector64\bin\$(Configuration)\net8.0\Injector64.exe">
+			<Link>Injector64.exe</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\Injector64\bin\$(Configuration)\net8.0\Injector64.dll">
+			<Link>Injector64.dll</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\Injector64\bin\$(Configuration)\net8.0\Injector64.deps.json">
+			<Link>Injector64.deps.json</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\Injector64\bin\$(Configuration)\net8.0\Injector64.runtimeconfig.json">
+			<Link>Injector64.runtimeconfig.json</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Properties\Settings.Designer.cs">
+			<DesignTimeSharedInput>True</DesignTimeSharedInput>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Settings.settings</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="Properties\Settings.settings">
+			<Generator>SettingsSingleFileGenerator</Generator>
+			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
+		</None>
+	</ItemGroup>
+
+</Project>
