@@ -1,12 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
+		<OutputType>Exe</OutputType>
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<PlatformTarget>x86</PlatformTarget>
-		<OutputType>Library</OutputType>
 	</PropertyGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\InjectorCommon\InjectorCommon.csproj" />
+		<ProjectReference Include="..\Injector32\Injector32.csproj" />
 	</ItemGroup>
 </Project>

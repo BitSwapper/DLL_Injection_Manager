@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Injector32", "Injector32\In
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InjectorCommon", "InjectorCommon\InjectorCommon.csproj", "{B04019BF-B324-433C-96D1-6E58A252D536}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Injector32MiddleMan", "Injector32MiddleMan\Injector32MiddleMan.csproj", "{BA9EC7FC-8525-414D-B6B1-D568680EA422}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Injector64MiddleMan", "Injector64MiddleMan\Injector64MiddleMan.csproj", "{8913756F-CD8D-4BB1-A09F-1E00793E9DFA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +73,30 @@ Global
 		{B04019BF-B324-433C-96D1-6E58A252D536}.Release|ARM32.Build.0 = Release|Any CPU
 		{B04019BF-B324-433C-96D1-6E58A252D536}.Release|x86.ActiveCfg = Release|Any CPU
 		{B04019BF-B324-433C-96D1-6E58A252D536}.Release|x86.Build.0 = Release|Any CPU
+		{BA9EC7FC-8525-414D-B6B1-D568680EA422}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA9EC7FC-8525-414D-B6B1-D568680EA422}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA9EC7FC-8525-414D-B6B1-D568680EA422}.Debug|ARM32.ActiveCfg = Debug|Any CPU
+		{BA9EC7FC-8525-414D-B6B1-D568680EA422}.Debug|ARM32.Build.0 = Debug|Any CPU
+		{BA9EC7FC-8525-414D-B6B1-D568680EA422}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BA9EC7FC-8525-414D-B6B1-D568680EA422}.Debug|x86.Build.0 = Debug|Any CPU
+		{BA9EC7FC-8525-414D-B6B1-D568680EA422}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA9EC7FC-8525-414D-B6B1-D568680EA422}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA9EC7FC-8525-414D-B6B1-D568680EA422}.Release|ARM32.ActiveCfg = Release|Any CPU
+		{BA9EC7FC-8525-414D-B6B1-D568680EA422}.Release|ARM32.Build.0 = Release|Any CPU
+		{BA9EC7FC-8525-414D-B6B1-D568680EA422}.Release|x86.ActiveCfg = Release|Any CPU
+		{BA9EC7FC-8525-414D-B6B1-D568680EA422}.Release|x86.Build.0 = Release|Any CPU
+		{8913756F-CD8D-4BB1-A09F-1E00793E9DFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8913756F-CD8D-4BB1-A09F-1E00793E9DFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8913756F-CD8D-4BB1-A09F-1E00793E9DFA}.Debug|ARM32.ActiveCfg = Debug|Any CPU
+		{8913756F-CD8D-4BB1-A09F-1E00793E9DFA}.Debug|ARM32.Build.0 = Debug|Any CPU
+		{8913756F-CD8D-4BB1-A09F-1E00793E9DFA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8913756F-CD8D-4BB1-A09F-1E00793E9DFA}.Debug|x86.Build.0 = Debug|Any CPU
+		{8913756F-CD8D-4BB1-A09F-1E00793E9DFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8913756F-CD8D-4BB1-A09F-1E00793E9DFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8913756F-CD8D-4BB1-A09F-1E00793E9DFA}.Release|ARM32.ActiveCfg = Release|Any CPU
+		{8913756F-CD8D-4BB1-A09F-1E00793E9DFA}.Release|ARM32.Build.0 = Release|Any CPU
+		{8913756F-CD8D-4BB1-A09F-1E00793E9DFA}.Release|x86.ActiveCfg = Release|Any CPU
+		{8913756F-CD8D-4BB1-A09F-1E00793E9DFA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -15,41 +15,60 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="..\Injector32\bin\$(Configuration)\net8.0\Injector32.exe">
-			<Link>Injector32.exe</Link>
+		<!-- Files for Injector32MiddleMan -->
+		<Content Include="..\Injector32MiddleMan\bin\$(Configuration)\net8.0\Injector32MiddleMan.exe">
+			<Link>Injector32MiddleMan.exe</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		<Content Include="..\Injector32MiddleMan\bin\$(Configuration)\net8.0\Injector32MiddleMan.dll">
+			<Link>Injector32MiddleMan.dll</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\Injector32MiddleMan\bin\$(Configuration)\net8.0\Injector32MiddleMan.deps.json">
+			<Link>Injector32MiddleMan.deps.json</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\Injector32MiddleMan\bin\$(Configuration)\net8.0\Injector32MiddleMan.runtimeconfig.json">
+			<Link>Injector32MiddleMan.runtimeconfig.json</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<!-- Also copy Injector32.dll and InjectorCommon.dll as dependencies of Injector32MiddleMan.exe -->
 		<Content Include="..\Injector32\bin\$(Configuration)\net8.0\Injector32.dll">
 			<Link>Injector32.dll</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\Injector32\bin\$(Configuration)\net8.0\Injector32.deps.json">
-			<Link>Injector32.deps.json</Link>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="..\Injector32\bin\$(Configuration)\net8.0\Injector32.runtimeconfig.json">
-			<Link>Injector32.runtimeconfig.json</Link>
+		<Content Include="..\InjectorCommon\bin\$(Configuration)\net8.0\InjectorCommon.dll">
+			<Link>InjectorCommon.dll</Link>
+			<!-- Link name might need to be unique if multiple versions, but should be same -->
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 
-		
-		
-		<Content Include="..\Injector64\bin\$(Configuration)\net8.0\Injector64.exe">
-			<Link>Injector64.exe</Link>
+
+		<!-- Files for Injector64MiddleMan -->
+		<Content Include="..\Injector64MiddleMan\bin\$(Configuration)\net8.0\Injector64MiddleMan.exe">
+			<Link>Injector64MiddleMan.exe</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		<Content Include="..\Injector64MiddleMan\bin\$(Configuration)\net8.0\Injector64MiddleMan.dll">
+			<Link>Injector64MiddleMan.dll</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\Injector64MiddleMan\bin\$(Configuration)\net8.0\Injector64MiddleMan.deps.json">
+			<Link>Injector64MiddleMan.deps.json</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\Injector64MiddleMan\bin\$(Configuration)\net8.0\Injector64MiddleMan.runtimeconfig.json">
+			<Link>Injector64MiddleMan.runtimeconfig.json</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<!-- Also copy Injector64.dll as dependency of Injector64MiddleMan.exe -->
 		<Content Include="..\Injector64\bin\$(Configuration)\net8.0\Injector64.dll">
 			<Link>Injector64.dll</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\Injector64\bin\$(Configuration)\net8.0\Injector64.deps.json">
-			<Link>Injector64.deps.json</Link>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="..\Injector64\bin\$(Configuration)\net8.0\Injector64.runtimeconfig.json">
-			<Link>Injector64.runtimeconfig.json</Link>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
+		<!-- InjectorCommon.dll already included above, no need to repeat if it's the same version -->
+
+
 	</ItemGroup>
 
 	<ItemGroup>
